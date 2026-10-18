@@ -15,9 +15,11 @@ select,button{font:inherit;padding:10px;border-radius:8px;width:100%;margin-top:
 <input type="file" id="f" accept=".sfc,.smc,.bin" hidden><div id="msg"></div></div>
 <p><small>ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไฟล์รอมไม่ถูกอัปโหลดไปไหน เว็บนี้ไม่มีรอมเกมให้ — ต้องใช้รอมที่คุณมีเองเท่านั้น</small></p></main>
 <script src="patches/ffmq.js"></script>
+<script src="patches/ys3.js"></script>
 <script>
 const GAMES={ffmq:{name:"Final Fantasy: Mystic Quest (USA, Rev 1) — แปลบทสนทนา",crc:0,size:524288,out:"FFMQ_Thai.sfc"}};
 GAMES.ffmq.crc=743622546;
+GAMES.ys3={name:"Ys III: Wanderers from Ys (USA) — แปลบทสนทนา+ชื่อสถานที่ (เมนู/ไอเทมคงอังกฤษ)",crc:0x64a91e64,size:1048576,out:"YsIII_Thai.sfc"};
 const $=i=>document.getElementById(i),g=$('g'),msg=$('msg');
 for(const k in GAMES)g.add(new Option(GAMES[k].name,k));
 function crc32(u){let t=crc32.t;if(!t){t=crc32.t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c}}let c=-1;for(let i=0;i<u.length;i++)c=t[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0}
@@ -29,7 +31,7 @@ function fixsum(r){const n=r.length;let s=0;for(let i=0;i<n;i++)s+=r[i];s&=0xFFF
 async function run(file){msg.className='';msg.textContent='กำลังแพตช์...';try{
 const G=GAMES[g.value];let rom=new Uint8Array(await file.arrayBuffer());
 if(rom.length%1024==512)rom=rom.subarray(512);
-if(rom.length!=G.size||crc32(rom)!=G.crc)throw"รอมไม่ตรงกับเกมที่เลือก (ต้องเป็นเวอร์ชัน USA Rev 1 ไม่มีการแก้ไข)";
+if(rom.length!=G.size||crc32(rom)!=G.crc)throw"รอมไม่ตรงกับเกมที่เลือก (ต้องเป็นเวอร์ชัน USA ไม่มีการแก้ไข)";
 const p=Uint8Array.from(atob(window.PATCHES[g.value]),c=>c.charCodeAt(0));
 const out=ips(rom,p);
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out]));a.download=G.out;a.click();
