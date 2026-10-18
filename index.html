@@ -11,8 +11,8 @@ select,button{font:inherit;padding:10px;border-radius:8px;width:100%;margin-top:
 #msg{margin-top:12px;min-height:1.5em}.ok{color:#2a9d4a}.er{color:#d33}small{color:var(--mut)}</style></head><body><main>
 <h1>แพตช์เกม SNES ภาษาไทย</h1>
 <div class="c"><label>เลือกเกม</label><select id="g"></select>
-<div id="drop">ลากไฟล์รอม .sfc / .smc มาวางที่นี่<br><small>หรือคลิกเพื่อเลือกไฟล์</small></div>
-<input type="file" id="f" accept=".sfc,.smc,.bin,*" hidden><div id="msg"></div></div>
+<div id="drop">ลากไฟล์รอมมาวางที่นี่<br><small>หรือแตะเพื่อเลือกไฟล์ (รับทุกนามสกุล เช่น .sfc .smc .bin)</small></div>
+<input type="file" id="f" hidden><div id="msg"></div></div>
 <p><small>ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไฟล์รอมไม่ถูกอัปโหลดไปไหน เว็บนี้ไม่มีรอมเกมให้ — ต้องใช้รอมที่คุณมีเองเท่านั้น</small></p></main>
 <script src="patches/ffmq.js"></script>
 <script src="patches/ys3.js"></script>
@@ -29,8 +29,10 @@ if(l){recs.push([a,p.subarray(o,o+l)]);o+=l;size=Math.max(size,a+l)}else{const r
 const out=new Uint8Array(size);out.set(rom);for(const[a,d]of recs)out.set(d,a);return out}
 function fixsum(r){const n=r.length;let s=0;for(let i=0;i<n;i++)s+=r[i];s&=0xFFFF;const c=s^0xFFFF;r[0x7FDC]=c&255;r[0x7FDD]=c>>8;r[0x7FDE]=s&255;r[0x7FDF]=s>>8}
 async function run(file){msg.className='';msg.textContent='กำลังแพตช์...';try{
-const G=GAMES[g.value];let rom=new Uint8Array(await file.arrayBuffer());
+let rom=new Uint8Array(await file.arrayBuffer());
 if(rom.length%1024==512)rom=rom.subarray(512);
+const cr=crc32(rom);for(const k in GAMES)if(GAMES[k].crc==cr&&GAMES[k].size==rom.length)g.value=k;
+const G=GAMES[g.value];
 if(rom.length!=G.size||crc32(rom)!=G.crc)throw"รอมไม่ตรงกับเกมที่เลือก (ต้องเป็นเวอร์ชัน USA ไม่มีการแก้ไข)";
 const p=Uint8Array.from(atob(window.PATCHES[g.value]),c=>c.charCodeAt(0));
 const out=ips(rom,p);
