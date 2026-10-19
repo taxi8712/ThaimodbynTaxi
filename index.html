@@ -14,13 +14,8 @@ select,button{font:inherit;padding:10px;border-radius:8px;width:100%;margin-top:
 <div id="drop">ลากไฟล์รอมมาวางที่นี่<br><small>หรือแตะเพื่อเลือกไฟล์ (รับทุกนามสกุล เช่น .sfc .smc .bin)</small></div>
 <input type="file" id="f" hidden><div id="msg"></div></div>
 <p><small>ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไฟล์รอมไม่ถูกอัปโหลดไปไหน เว็บนี้ไม่มีรอมเกมให้ — ต้องใช้รอมที่คุณมีเองเท่านั้น</small></p></main>
-<script>
-// เตรียมพื้นที่เก็บแพตช์ก่อนโหลดไฟล์แพตช์แต่ละเกม
-window.PATCHES = window.PATCHES || {};
-window.PATCH_LOAD_ERRORS = [];
-</script>
-<script src="patches/ffmq.js" onerror="window.PATCH_LOAD_ERRORS.push('ffmq.js')"></script>
-<script src="patches/ys3.js" onerror="window.PATCH_LOAD_ERRORS.push('ys3.js')"></script>
+<script src="patches/ffmq.js"></script>
+<script src="patches/ys3.js"></script>
 <script>
 const GAMES={ffmq:{name:"Final Fantasy: Mystic Quest (USA, Rev 1) — แปลบทสนทนา",crc:0,size:524288,out:"FFMQ_Thai.sfc"}};
 GAMES.ffmq.crc=743622546;
@@ -39,14 +34,12 @@ if(rom.length%1024==512)rom=rom.subarray(512);
 const cr=crc32(rom);for(const k in GAMES)if(GAMES[k].crc==cr&&GAMES[k].size==rom.length)g.value=k;
 const G=GAMES[g.value];
 if(rom.length!=G.size||crc32(rom)!=G.crc)throw"รอมไม่ตรงกับเกมที่เลือก (ต้องเป็นเวอร์ชัน USA ไม่มีการแก้ไข)";
-const patchData=window.PATCHES && window.PATCHES[g.value];
-if(!patchData){
- const missing=window.PATCH_LOAD_ERRORS && window.PATCH_LOAD_ERRORS.length
-   ? ' โหลดไฟล์ไม่สำเร็จ: '+window.PATCH_LOAD_ERRORS.join(', ')+ ' (ตรวจโฟลเดอร์ patches และตัวพิมพ์เล็ก/ใหญ่)'
-   : ' ตรวจว่าไฟล์ patches/'+g.value+'.js กำหนด window.PATCHES.'+g.value+' เป็นข้อมูลแพตช์ Base64';
- throw 'ไม่พบข้อมูลแพตช์ของเกมนี้.'+missing;
+// --- จุดที่แก้ไข: เพิ่มการตรวจสอบข้อมูลแพตช์ ---
+if (!window.PATCHES || !window.PATCHES[g.value]) {
+    throw "ไม่พบข้อมูลแพตช์ (ไฟล์ js อาจโหลดไม่สำเร็จ) กรุณารีเฟรชหน้าเว็บหรือตรวจสอบอินเทอร์เน็ต";
 }
-let p;try{p=Uint8Array.from(atob(patchData),c=>c.charCodeAt(0))}catch(_){throw 'ข้อมูลแพตช์ไม่ใช่ Base64 ที่ถูกต้อง'}
+// ------------------------------------------
+const p=Uint8Array.from(atob(window.PATCHES[g.value]),c=>c.charCodeAt(0));
 const out=ips(rom,p);
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out]));a.download=G.out;a.click();
 msg.className='ok';msg.textContent='สำเร็จ! ดาวน์โหลด '+G.out+' แล้ว'}catch(e){msg.className='er';msg.textContent=''+e}}
