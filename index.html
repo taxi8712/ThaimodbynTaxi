@@ -17,13 +17,13 @@ select,button{font:inherit;padding:10px;border-radius:8px;width:100%;margin-top:
 <script src="patches/ffmq.js"></script>
 <script src="patches/ys3.js"></script>
 <script src="patches/ys4.js"></script>
-<script src="patches/simant.js"></script>
+<script src="patches/ys5.js"></script>
 <script>
 const GAMES={ffmq:{name:"Final Fantasy: Mystic Quest (USA, Rev 1) — แปลบทสนทนา",crc:0,size:524288,out:"FFMQ_Thai.sfc"}};
 GAMES.ffmq.crc=743622546;
 GAMES.ys3={name:"Ys III: Wanderers from Ys (USA) — แปลบทสนทนา+ชื่อสถานที่ (เมนู/ไอเทมคงอังกฤษ)",crc:0x64a91e64,size:1048576,out:"YsIII_Thai.sfc"};
 GAMES.ys4={name:"Ys IV: Mask of the Sun (Japan, T-En Aeon Genesis v2.10) — แปลบทสนทนา (เมนู/ไอเทม/สกิลคงอังกฤษ)",crc:0x50ac70d5,size:1572864,out:"YsIV_Thai.sfc"};
-GAMES.simant={name:"SimAnt (USA) — แปลทั้งเกม (เมนู ข้อความวิ่ง บทสอนเล่น)",crc:0xd08c05df,size:1048576,out:"SimAnt_Thai.sfc"};
+GAMES.ys5={name:"Ys V: Kefin, Lost Kingdom of Sand (T-En v1.00) — แปลบทสนทนา/ชื่อ (เมนู/ไอเทม/ระบบคงอังกฤษ)",crc:0x59542e9f,size:3145728,out:"YsV_Thai.sfc"};
 const $=i=>document.getElementById(i),g=$('g'),msg=$('msg');
 for(const k in GAMES)g.add(new Option(GAMES[k].name,k));
 function crc32(u){let t=crc32.t;if(!t){t=crc32.t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c}}let c=-1;for(let i=0;i<u.length;i++)c=t[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0}
